@@ -21,24 +21,24 @@ def clean_message(message):
         return None
     
     cleaned_message = {
-        'loaction': message['location'].upper(), # Assuming caps() function capitalizes the location
+        'location': message['location'].upper(), # Assuming caps() function capitalizes the location
         'units': message['units'], # No change to units
         'date': message['date'] # Assuming date is already in the correct format
     }
 
     return cleaned_message
-
 # Handler for data POST requests
 class DataPostHandler(http.server.BaseHTTPRequestHandler):
     def do_POST(self):
-        content_length = int(self.headers['Content-Lenght'])
+        content_length = int(self.headers['Content-Length'])
         post_data = self.rfile.read(content_length)
+        print(f"Received data: {post_data.decode('utf-8')}")# Log the received data
 
         try:
             message = json.loads(post_data.decode('utf-8'))
             cleaned = clean_message(message)
             if cleaned:
-                filename = f"tmp/{datetime.utcnow().strftime('%Y%m%d%H%M%S')}.txt"
+                filename = "tmp/" + datetime.utcnow().strftime('%Y%m%d%H%M%S') + ".txt"
                 if writefile(filename, cleaned):
                     self.send_response(200)
                     self.end_headers()
